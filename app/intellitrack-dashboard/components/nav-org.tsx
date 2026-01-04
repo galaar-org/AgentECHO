@@ -103,7 +103,7 @@ export function NavOrg() {
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <HugeiconsIcon icon={Building03Icon} />
-                BuildBear Labs LLC
+                Galaar Org
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
