@@ -1,10 +1,10 @@
-# IntelliTrack
+# AgentECHO
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**IntelliTrack** is a comprehensive AI traffic analytics platform that tracks, classifies, and helps monetize AI bot traffic (GPTBot, ClaudeBot, PerplexityBot, etc.) across your web applications.
+**AgentECHO** is a comprehensive AI traffic analytics platform that tracks, classifies, and helps monetize AI bot traffic (GPTBot, ClaudeBot, PerplexityBot, etc.) across your web applications.
 
-![IntelliTrack Dashboard](https://via.placeholder.com/800x400?text=IntelliTrack+Dashboard)
+![AgentECHO Dashboard](https://via.placeholder.com/800x400?text=AgentECHO+Dashboard)
 
 ## ✨ Features
 
@@ -23,13 +23,13 @@
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │                      YOUR APPLICATION                             │
-│            (Next.js with @intellitrack/nextjs SDK)               │
+│            (Next.js with @agentecho/nextjs SDK)               │
 │                       proxy.ts middleware                         │
 └────────────────────────┬─────────────────────────────────────────┘
                          │ HMAC-signed events (fire-and-forget)
                          ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                 INTELLITRACK SERVER (Go)                          │
+│                 AGENTECHO SERVER (Go)                             │
 │  ┌─────────┐   ┌────────────┐   ┌────────┐   ┌─────────────────┐ │
 │  │ Ingest  │ → │ Classifier │ → │ Buffer │ → │ ClickHouse      │ │
 │  │   API   │   │ (20+ bots) │   │ (batch)│   │ (analytics DB)  │ │
@@ -38,7 +38,7 @@
                          │ REST API queries
                          ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               INTELLITRACK DASHBOARD (Next.js 16)                 │
+│               AGENTECHO DASHBOARD (Next.js 16)                    │
 │  ┌──────────┐  ┌─────────────┐  ┌───────────┐  ┌──────────────┐  │
 │  │ Overview │  │ Time Series │  │Top Routes │  │  Top Bots    │  │
 │  └──────────┘  └─────────────┘  └───────────┘  └──────────────┘  │
@@ -50,19 +50,19 @@
 ## 📁 Monorepo Structure
 
 ```
-intellitrack/
+agentecho/
 ├── docker-compose.yml          # Production-ready Docker setup
 ├── .env.example                # Environment configuration template
 │
 ├── app/
-│   ├── intellitrack-dashboard/ # Next.js 16 analytics dashboard
+│   ├── agentecho-dashboard/ # Next.js 16 analytics dashboard
 │   │   ├── app/                # App Router pages
 │   │   ├── components/         # React components
 │   │   ├── hooks/              # React Query hooks
 │   │   ├── lib/                # Utilities & server actions
 │   │   └── docs/               # Dashboard documentation
 │   │
-│   └── intellitrack-server/    # Go backend collector
+│   └── agentecho-server/    # Go backend collector
 │       ├── cmd/server/         # Entry point
 │       └── internal/           # Core modules
 │           ├── api/            # HTTP handlers
@@ -73,10 +73,10 @@ intellitrack/
 │           └── storage/        # ClickHouse operations
 │
 └── packages/
-    └── intellitrack-sdk/       # Client SDK monorepo
+    └── agentecho-sdk/       # Client SDK monorepo
         └── packages/
-            ├── intellitrack-core/    # Framework-agnostic core
-            └── intellitrack-nextjs/  # Next.js adapter
+            ├── agentecho-core/    # Framework-agnostic core
+            └── agentecho-nextjs/  # Next.js adapter
 ```
 
 ---
@@ -93,8 +93,8 @@ intellitrack/
 ### 1. Clone & Start Services
 
 ```bash
-git clone https://github.com/your-org/intellitrack.git
-cd intellitrack
+git clone https://github.com/galaar-org/AgentECHO.git
+cd AgentECHO
 
 # Start all services (server, dashboard, clickhouse)
 docker compose up -d
@@ -113,19 +113,19 @@ docker compose logs -f
 ### 3. Integrate the SDK
 
 ```bash
-pnpm add @intellitrack/nextjs
+pnpm add @agentecho/nextjs
 ```
 
 Create `proxy.ts` in your Next.js app:
 
 ```typescript
-import { createIntelliTrack } from '@intellitrack/nextjs';
+import { createAgentECHO } from '@agentecho/nextjs';
 import { NextRequest, NextFetchEvent, NextResponse } from 'next/server';
 
-const tracker = createIntelliTrack({
-  ingestUrl: process.env.INTELLITRACK_URL!,
-  keyId: process.env.INTELLITRACK_KEY_ID!,
-  hmacSecret: process.env.INTELLITRACK_SECRET!,
+const tracker = createAgentECHO({
+  ingestUrl: process.env.AGENTECHO_URL!,
+  keyId: process.env.AGENTECHO_KEY_ID!,
+  hmacSecret: process.env.AGENTECHO_SECRET!,
   sampleRate: 0.1, // 10% sampling
 });
 
@@ -143,7 +143,7 @@ export const config = {
 
 ## 📦 Components
 
-### 🖥️ IntelliTrack Dashboard
+### 🖥️ AgentECHO Dashboard
 
 Real-time analytics dashboard built with Next.js 16.
 
@@ -162,11 +162,11 @@ Real-time analytics dashboard built with Next.js 16.
 - `/top-routes` — Route-level analytics with revenue estimation
 - `/top-bots` — AI bot/operator traffic analysis
 
-[📚 Dashboard Documentation](./app/intellitrack-dashboard/docs/)
+[📚 Dashboard Documentation](./app/agentecho-dashboard/docs/)
 
 ---
 
-### ⚙️ IntelliTrack Server
+### ⚙️ AgentECHO Server
 
 High-throughput Go backend for event collection and analytics.
 
@@ -194,17 +194,17 @@ High-throughput Go backend for event collection and analytics.
 | DeepSeek | DeepSeekBot |
 | *...and more* | |
 
-[📚 Server Documentation](./app/intellitrack-server/docs/)
+[📚 Server Documentation](./app/agentecho-server/docs/)
 
 ---
 
-### 📡 IntelliTrack SDK
+### 📡 AgentECHO SDK
 
 Fire-and-forget client SDK for capturing request events.
 
 ```
-@intellitrack/core      — Framework-agnostic core
-@intellitrack/nextjs    — Next.js 15/16 adapter
+@agentecho/core      — Framework-agnostic core
+@agentecho/nextjs    — Next.js 15/16 adapter
 ```
 
 **Features:**
@@ -213,7 +213,7 @@ Fire-and-forget client SDK for capturing request events.
 - Edge Runtime compatible (Web Crypto API)
 - Never blocks user requests
 
-[📚 SDK Documentation](./packages/intellitrack-sdk/)
+[📚 SDK Documentation](./packages/agentecho-sdk/)
 
 ---
 
@@ -351,7 +351,7 @@ ORDER BY (project_id, route, ts)
 ### Dashboard
 
 ```bash
-cd app/intellitrack-dashboard
+cd app/agentecho-dashboard
 pnpm install
 pnpm dev
 ```
@@ -359,14 +359,14 @@ pnpm dev
 ### Server
 
 ```bash
-cd app/intellitrack-server
+cd app/agentecho-server
 go run ./cmd/server
 ```
 
 ### SDK
 
 ```bash
-cd packages/intellitrack-sdk
+cd packages/agentecho-sdk
 pnpm install
 pnpm build
 ```
@@ -375,7 +375,7 @@ pnpm build
 
 ## 📈 Revenue Estimation
 
-IntelliTrack helps estimate potential revenue from AI traffic monetization:
+AgentECHO helps estimate potential revenue from AI traffic monetization:
 
 1. **Set Route Prices** — Define $/1K requests per route
 2. **View Estimates** — See projected revenue at different pay-through rates
@@ -395,10 +395,6 @@ Example: If `/api/products` receives 100K AI requests/month at $5/1K:
 3. Commit changes (`git commit -m 'Add amazing feature'`)
 4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-See individual component docs for specific guidelines:
-- [Dashboard Contributing](./app/intellitrack-dashboard/CONTRIBUTING.md)
-- [SDK Contributing](./packages/intellitrack-sdk/CONTRIBUTING.md)
 
 ---
 

@@ -1,0 +1,58 @@
+{
+  "name": "@galaar/agentecho-nextjs",
+  "version": "0.0.1",
+  "description": "AgentECHO Next.js - Next.js adapter for @galaar/agentecho-core with proxy.ts integration",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "test": "vitest",
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "nextjs",
+    "agentecho",
+    "proxy",
+    "middleware",
+    "observability",
+    "analytics"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/galaar-org/AgentECHO.git",
+    "directory": "packages/agentecho-sdk/packages/agentecho-nextjs"
+  },
+  "homepage": "https://github.com/galaar-org/AgentECHO#readme",
+  "bugs": {
+    "url": "https://github.com/galaar-org/AgentECHO/issues"
+  },
+  "dependencies": {
+    "@galaar/agentecho-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "next": "^15.0.0 || ^16.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "next": "^15.0.3",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.1"
+  }
+}
