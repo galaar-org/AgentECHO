@@ -24,17 +24,17 @@ export class Transport implements TransportInterface {
 
       if (this.debug) {
         if (response.ok || response.status === 202) {
-          console.log(`[IntelliTrack] Event sent: ${response.status}`);
+          console.log(`[AgentECHO] Event sent: ${response.status}`);
         } else {
-          console.warn(`[IntelliTrack] Unexpected status: ${response.status}`);
+          console.warn(`[AgentECHO] Unexpected status: ${response.status}`);
         }
       }
     } catch (error) {
       if (this.debug) {
         if (error instanceof Error && error.name === 'AbortError') {
-          console.warn(`[IntelliTrack] Timeout after ${this.timeout}ms`);
+          console.warn(`[AgentECHO] Timeout after ${this.timeout}ms`);
         } else {
-          console.warn('[IntelliTrack] Send failed:', error);
+          console.warn('[AgentECHO] Send failed:', error);
         }
       }
     } finally {
