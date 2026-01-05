@@ -4,7 +4,6 @@
 
 **AgentECHO** is a comprehensive AI traffic analytics platform that tracks, classifies, and helps monetize AI bot traffic (GPTBot, ClaudeBot, PerplexityBot, etc.) across your web applications.
 
-![AgentECHO Dashboard](https://via.placeholder.com/800x400?text=AgentECHO+Dashboard)
 
 ## ✨ Features
 
@@ -213,7 +212,7 @@ Fire-and-forget client SDK for capturing request events.
 - Edge Runtime compatible (Web Crypto API)
 - Never blocks user requests
 
-[📚 SDK Documentation](./packages/agentecho-sdk/)
+[📚 SDK Documentation](./packages/agentecho-sdk/docs)
 
 ---
 
