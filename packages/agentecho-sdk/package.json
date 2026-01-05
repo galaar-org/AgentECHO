@@ -1,6 +1,6 @@
 {
   "name": "@galaar/agentecho-sdk",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "AgentECHO - AI bot traffic analytics SDK for Next.js",
   "repository": {

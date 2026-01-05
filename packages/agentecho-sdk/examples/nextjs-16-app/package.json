@@ -1,6 +1,6 @@
 {
   "name": "@galaar/agentecho-nextjs-example",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "AgentECHO Next.js 16 integration example",
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "@galaar/agentecho-nextjs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "AgentECHO Next.js - Next.js adapter for @galaar/agentecho-core with proxy.ts integration",
   "type": "module",
   "main": "./dist/index.cjs",
