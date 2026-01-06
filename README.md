@@ -1,6 +1,7 @@
 # AgentECHO
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://img.shields.io/npm/v/@galaar/agentecho-nextjs.svg)](https://www.npmjs.com/package/@galaar/agentecho-nextjs)
 
 **AgentECHO** is a comprehensive AI traffic analytics platform that tracks, classifies, and helps monetize AI bot traffic (GPTBot, ClaudeBot, PerplexityBot, etc.) across your web applications.
 
