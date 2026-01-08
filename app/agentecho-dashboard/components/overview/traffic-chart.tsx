@@ -19,9 +19,8 @@ import { format, parseISO } from "date-fns";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 export function TrafficChart() {
-	const { timeRange } = useFilters();
-	const limit = timeRange === "last_hour" ? 60 : 24;
-	const { data, isLoading, error } = useTimeseries(limit);
+	const { chartLabelFormat } = useFilters();
+	const { data, isLoading, error } = useTimeseries();
 
 	if (isLoading) {
 		return <Skeleton className="h-[350px] w-full rounded-lg" />;
@@ -35,10 +34,9 @@ export function TrafficChart() {
 		);
 	}
 
-	const timeFormat = timeRange === "last_hour" ? "HH:mm" : "HH:mm";
 	const chartData = data.map((point) => ({
 		...point,
-		time: format(parseISO(point.ts), timeFormat),
+		time: format(parseISO(point.ts), chartLabelFormat),
 		human: point.total - point.ai,
 	}));
 

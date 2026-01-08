@@ -1,7 +1,7 @@
 "use client";
 
+import { DateRangePicker } from "@/components/common/date-range-picker";
 import { RouteSelector } from "@/components/common/route-selector";
-import { TimeRangeToggle } from "@/components/common/time-range-toggle";
 import { LiveIndicator } from "@/components/live-indicator";
 import { Button } from "@/components/ui";
 import { useAvailableRoutes } from "@/hooks/use-api";
@@ -19,11 +19,11 @@ export function TopBotsFilterBar({
 	title = "Top Bots",
 	description = "AI bots crawling your site",
 }: TopBotsFilterBarProps) {
-	const { route, timeRange, setRoute, setTimeRange, clearFilters } = useFilters();
+	const { route, timeRangePreset, setRoute, clearFilters } = useFilters();
 	const { data: routes, isLoading: routesLoading } = useAvailableRoutes();
 	const [open, setOpen] = useState(false);
 
-	const hasActiveFilters = route !== null || timeRange !== "today";
+	const hasActiveFilters = route !== null || timeRangePreset !== "today";
 
 	return (
 		<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -44,7 +44,7 @@ export function TopBotsFilterBar({
 					onRouteChange={setRoute}
 				/>
 
-				<TimeRangeToggle value={timeRange} onChange={setTimeRange} />
+				<DateRangePicker />
 
 				{hasActiveFilters && (
 					<Button

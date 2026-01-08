@@ -1,6 +1,6 @@
 "use client";
 
-import { TimeRangeToggle } from "@/components/common/time-range-toggle";
+import { DateRangePicker } from "@/components/common/date-range-picker";
 import { LiveIndicator } from "@/components/live-indicator";
 import {
 	Button,
@@ -25,13 +25,13 @@ export function TopRoutesFilterBar({
 	title = "Top Routes",
 	description = "Most visited routes by AI bots",
 }: TopRoutesFilterBarProps) {
-	const { timeRange, setTimeRange, clearFilters } = useFilters();
+	const { timeRangePreset, clearFilters } = useFilters();
 	const { prices, setBulkPrices } = useRoutePrices();
 	const { data } = useTopRoutes(10000);
 	const [bulkPriceInput, setBulkPriceInput] = useState<string | null>(null);
 	const [isBulkOpen, setIsBulkOpen] = useState(false);
 
-	const hasActiveFilters = timeRange !== "today";
+	const hasActiveFilters = timeRangePreset !== "today";
 	const routeCount = data?.length ?? 0;
 
 	const { uniformPrice, pricedCount } = useMemo(() => {
@@ -149,7 +149,7 @@ export function TopRoutesFilterBar({
 					</PopoverContent>
 				</Popover>
 
-				<TimeRangeToggle value={timeRange} onChange={setTimeRange} />
+				<DateRangePicker />
 
 				{hasActiveFilters && (
 					<Button

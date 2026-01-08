@@ -27,18 +27,18 @@ import { useMemo } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { type ChartStats, ChartStatsDisplay } from "./chart-stats-display";
 
-function useChartData(limit: number) {
-	const { data, isLoading, error } = useTimeseries(limit);
+function useChartData() {
+	const { data, isLoading, error } = useTimeseries();
+	const { chartLabelFormat } = useFilters();
 
 	const chartData = useMemo(() => {
 		if (!data) return [];
-		const timeFormat = "HH:mm";
 		return data.map((point) => ({
 			...point,
-			time: format(parseISO(point.ts), timeFormat),
+			time: format(parseISO(point.ts), chartLabelFormat),
 			human: point.total - point.ai,
 		}));
-	}, [data]);
+	}, [data, chartLabelFormat]);
 
 	const stats = useMemo((): ChartStats | null => {
 		if (!chartData || chartData.length < 2) return null;
@@ -58,9 +58,8 @@ function useChartData(limit: number) {
 }
 
 export function TimeSeriesChart() {
-	const { timeRange } = useFilters();
-	const limit = timeRange === "last_hour" ? 60 : 24;
-	const { chartData, stats, isLoading, error, hasData } = useChartData(limit);
+	const { timeRangeLabel } = useFilters();
+	const { chartData, stats, isLoading, error, hasData } = useChartData();
 
 	if (isLoading) {
 		return <Skeleton className="h-[450px] w-full rounded-lg" />;
@@ -74,7 +73,7 @@ export function TimeSeriesChart() {
 		);
 	}
 
-	const description = timeRange === "last_hour" ? "Traffic from the last hour" : "Traffic from today";
+	const description = `Traffic for ${timeRangeLabel.toLowerCase()}`;
 
 	return (
 		<Card>

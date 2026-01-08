@@ -1,36 +1,102 @@
 "use client";
 
-import { type ReactNode, createContext, useContext, useState } from "react";
+import { type ReactNode, createContext, useContext, useMemo, useState } from "react";
+import {
+	type ChartBucket,
+	type TimeRangePreset,
+	TIME_RANGE_PRESETS,
+	getCustomRangeConfig,
+	getPresetConfig,
+} from "./time-range-presets";
 
-// Global filter state for route and time range selection
+// Re-export for convenience
+export type { TimeRangePreset, ChartBucket };
 
-export type TimeRange = "last_hour" | "today";
+export interface CustomDateRange {
+	from: Date;
+	to: Date;
+}
 
 interface FilterState {
 	route: string | null;
-	timeRange: TimeRange;
+	timeRangePreset: TimeRangePreset | null; // null when using custom range
+	customDateRange: CustomDateRange | null; // set when using custom range
 }
 
 interface FilterContextType extends FilterState {
 	setRoute: (route: string | null) => void;
-	setTimeRange: (timeRange: TimeRange) => void;
+	setTimeRangePreset: (preset: TimeRangePreset) => void;
+	setCustomDateRange: (range: CustomDateRange) => void;
 	clearFilters: () => void;
+	// Computed values
+	dateRange: { from: Date; to: Date };
+	timeRangeLabel: string;
+	chartBucket: ChartBucket;
+	chartLabelFormat: string;
+	dataLimit: number;
+	isCustomRange: boolean;
 }
 
 const FilterContext = createContext<FilterContextType | null>(null);
 
 export function FilterProvider({ children }: { children: ReactNode }) {
 	const [route, setRoute] = useState<string | null>(null);
-	const [timeRange, setTimeRange] = useState<TimeRange>("today");
+	const [timeRangePreset, setTimeRangePresetState] = useState<TimeRangePreset | null>("today");
+	const [customDateRange, setCustomDateRangeState] = useState<CustomDateRange | null>(null);
+
+	const setTimeRangePreset = (preset: TimeRangePreset) => {
+		setTimeRangePresetState(preset);
+		setCustomDateRangeState(null);
+	};
+
+	const setCustomDateRange = (range: CustomDateRange) => {
+		setCustomDateRangeState(range);
+		setTimeRangePresetState(null);
+	};
 
 	const clearFilters = () => {
 		setRoute(null);
-		setTimeRange("today");
+		setTimeRangePresetState("today");
+		setCustomDateRangeState(null);
 	};
+
+	// Compute current values based on preset or custom range
+	const computed = useMemo(() => {
+		if (customDateRange) {
+			const config = getCustomRangeConfig(customDateRange.from, customDateRange.to);
+			return {
+				dateRange: customDateRange,
+				timeRangeLabel: "Custom Range",
+				chartBucket: config.bucket,
+				chartLabelFormat: config.chartLabelFormat,
+				dataLimit: config.limit,
+				isCustomRange: true,
+			};
+		}
+
+		const preset = getPresetConfig(timeRangePreset ?? "today");
+		return {
+			dateRange: preset.getDateRange(),
+			timeRangeLabel: preset.label,
+			chartBucket: preset.bucket,
+			chartLabelFormat: preset.chartLabelFormat,
+			dataLimit: preset.limit,
+			isCustomRange: false,
+		};
+	}, [timeRangePreset, customDateRange]);
 
 	return (
 		<FilterContext.Provider
-			value={{ route, timeRange, setRoute, setTimeRange, clearFilters }}
+			value={{
+				route,
+				timeRangePreset,
+				customDateRange,
+				setRoute,
+				setTimeRangePreset,
+				setCustomDateRange,
+				clearFilters,
+				...computed,
+			}}
 		>
 			{children}
 		</FilterContext.Provider>
@@ -45,21 +111,16 @@ export function useFilters() {
 	return context;
 }
 
-// Converts time range to from/to timestamps
-export function getTimeRangeDates(timeRange: TimeRange): { from: Date; to: Date } {
-	const now = new Date();
-
-	if (timeRange === "last_hour") {
-		return {
-			from: new Date(now.getTime() - 60 * 60 * 1000),
-			to: now,
-		};
+// Legacy function for backward compatibility during migration
+// This can be removed once all components are updated
+export function getTimeRangeDates(timeRange: TimeRangePreset): { from: Date; to: Date } {
+	const preset = TIME_RANGE_PRESETS.find((p) => p.id === timeRange);
+	if (!preset) {
+		// Default to today
+		const now = new Date();
+		const midnight = new Date(now);
+		midnight.setHours(0, 0, 0, 0);
+		return { from: midnight, to: now };
 	}
-
-	const midnight = new Date(now);
-	midnight.setHours(0, 0, 0, 0);
-	return {
-		from: midnight,
-		to: now,
-	};
+	return preset.getDateRange();
 }

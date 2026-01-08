@@ -27,12 +27,9 @@ import { TimeSeriesTableRow } from "./time-series-table-row";
 type AIFilterOption = "all" | "high" | "medium" | "low";
 
 export function TimeSeriesTable() {
-	const { timeRange } = useFilters();
-	const limit = timeRange === "last_hour" ? 60 : 24;
-	const { data, isLoading } = useTimeseries(limit);
+	const { chartLabelFormat } = useFilters();
+	const { data, isLoading } = useTimeseries();
 	const [aiFilter, setAiFilter] = useState<AIFilterOption>("all");
-
-	const timeFormat = "HH:mm";
 
 	const processedData = useMemo(() => {
 		if (!data) return [];
@@ -40,9 +37,9 @@ export function TimeSeriesTable() {
 			...point,
 			human: point.total - point.ai,
 			aiPercent: calculateAIPercentage(point.total, point.ai),
-			formattedTime: format(parseISO(point.ts), timeFormat),
+			formattedTime: format(parseISO(point.ts), chartLabelFormat),
 		}));
-	}, [data]);
+	}, [data, chartLabelFormat]);
 
 	const filteredByAI = useMemo(() => {
 		if (aiFilter === "all") return processedData;

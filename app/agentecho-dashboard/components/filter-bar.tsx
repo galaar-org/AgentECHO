@@ -1,5 +1,6 @@
 "use client";
 
+import { DateRangePicker } from "@/components/common/date-range-picker";
 import { LiveIndicator } from "@/components/live-indicator";
 import {
   Button,
@@ -13,11 +14,9 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  ToggleGroup,
-  ToggleGroupItem,
 } from "@/components/ui";
 import { queryKeys, useAvailableRoutes, useOpportunityEstimate, useTopRoutes } from "@/hooks/use-api";
-import { type TimeRange, useFilters } from "@/lib/filter-context";
+import { useFilters } from "@/lib/filter-context";
 import { useRoutePrices } from "@/lib/route-prices-context";
 import { cn } from "@/lib/utils";
 import { ArrowUpDownIcon, Cancel01Icon, Dollar01Icon, Tick01Icon } from "@hugeicons/core-free-icons";
@@ -26,7 +25,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 
 export function FilterBar() {
-  const { route, timeRange, setRoute, setTimeRange, clearFilters } = useFilters();
+  const { route, timeRangePreset, setRoute, clearFilters } = useFilters();
   const { data: routes, isLoading: routesLoading } = useAvailableRoutes();
   const { data: topRoutesData } = useTopRoutes(10000);
   const { prices, setBulkPrices } = useRoutePrices();
@@ -47,11 +46,11 @@ export function FilterBar() {
   // Refetch overview when estimate completes (prices were saved)
   useEffect(() => {
     if (estimateSuccess) {
-      queryClient.invalidateQueries({ queryKey: queryKeys.overview(timeRange, route) });
+      queryClient.invalidateQueries({ queryKey: ["overview"] });
     }
-  }, [estimateSuccess, queryClient, timeRange, route]);
+  }, [estimateSuccess, queryClient]);
 
-  const hasActiveFilters = route !== null || timeRange !== "today";
+  const hasActiveFilters = route !== null || timeRangePreset !== "today";
   const routeCount = topRoutes.length;
 
   const { uniformPrice, pricedCount } = useMemo(() => {
@@ -230,28 +229,7 @@ export function FilterBar() {
         </Popover>
 
         <div className="flex items-center gap-2">
-          <ToggleGroup
-            type="single"
-            value={timeRange}
-            onValueChange={(value) => {
-              if (value) setTimeRange(value as TimeRange);
-            }}
-          >
-            <ToggleGroupItem
-              value="last_hour"
-              aria-label="Last Hour"
-              className="text-xs px-3"
-            >
-              Last Hour
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="today"
-              aria-label="Today"
-              className="text-xs px-3"
-            >
-              Today
-            </ToggleGroupItem>
-          </ToggleGroup>
+          <DateRangePicker />
 
           {hasActiveFilters && (
             <Button
