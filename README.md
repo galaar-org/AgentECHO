@@ -85,6 +85,8 @@ agentecho/
 
 ## 🚀 Quick Start
 
+> **📖 Full Setup Guide**: See [QUICKSTART.md](./QUICKSTART.md) for detailed instructions
+
 ### Prerequisites
 
 - Docker & Docker Compose
@@ -92,14 +94,32 @@ agentecho/
 - Go 1.22+ (for server development)
 - pnpm (for SDK/dashboard)
 
-### 1. Clone & Start Services
+### 1. Get AgentECHO Running
+
+**Option A: Pull from Docker Hub** (Recommended for users)
+
+```bash
+# Clone repository
+git clone https://github.com/galaar-org/AgentECHO.git
+cd AgentECHO
+
+# Configure environment
+cp .env.example .env
+# Edit .env and set INGEST_TOKEN (generate with: openssl rand -base64 32)
+
+# Pull images and start
+docker compose pull
+docker compose up -d
+```
+
+**Option B: Build from Source** (For developers)
 
 ```bash
 git clone https://github.com/galaar-org/AgentECHO.git
 cd AgentECHO
 
 # Start all services (server, dashboard, clickhouse)
-docker compose up -d
+docker compose up -d --build
 
 # View logs
 docker compose logs -f

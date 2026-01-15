@@ -6,14 +6,14 @@ services:
     profiles:
       - production
     command:
-      - "--api.insecure=true"
+      - "--api.dashboard=${TRAEFIK_DASHBOARD:-false}"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencrypt.acme.email=admin@example.com"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-admin@example.com}"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
     ports:
       - "80:80"
@@ -28,6 +28,7 @@ services:
 
   # AgentECHO Backend Server (Go)
   server:
+    image: galaarorg/agentecho-server:${AGENTECHO_VERSION:-latest}
     build:
       context: ./app/agentecho-server
       dockerfile: Dockerfile
@@ -37,15 +38,15 @@ services:
     environment:
       - CLICKHOUSE_HOST=clickhouse
       - CLICKHOUSE_PORT=9000
-      - CLICKHOUSE_DB=default
-      - CLICKHOUSE_USER=default
-      - CLICKHOUSE_PASSWORD=
-      - INGEST_TOKEN=${INGEST_TOKEN:-your-secret-token-here}
+      - CLICKHOUSE_DB=${CLICKHOUSE_DB:-default}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER:-default}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
+      - INGEST_TOKEN=${INGEST_TOKEN}
       - HTTP_PORT=8080
-      - BUFFER_SIZE=1000
-      - FLUSH_INTERVAL=1
-      - DEFAULT_PRICE_PER_1K=5.0
-      - DEFAULT_PAY_THROUGH=0.5
+      - BUFFER_SIZE=${BUFFER_SIZE:-1000}
+      - FLUSH_INTERVAL=${FLUSH_INTERVAL:-1}
+      - DEFAULT_PRICE_PER_1K=${DEFAULT_PRICE_PER_1K:-5.0}
+      - DEFAULT_PAY_THROUGH=${DEFAULT_PAY_THROUGH:-0.5}
     depends_on:
       clickhouse:
         condition: service_healthy
@@ -64,6 +65,7 @@ services:
 
   # AgentECHO Dashboard (Next.js)
   dashboard:
+    image: galaarorg/agentecho-dashboard:${AGENTECHO_VERSION:-latest}
     build:
       context: ./app/agentecho-dashboard
       dockerfile: Dockerfile
@@ -71,8 +73,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - API_URL=http://server:8080/v1
-      - API_KEY=${INGEST_TOKEN:-your-secret-token-here}
+      - API_URL=${API_URL:-http://server:8080/v1}
+      - API_KEY=${INGEST_TOKEN}
     depends_on:
       - server
     restart: unless-stopped
@@ -97,9 +99,9 @@ services:
       - "8123:8123"  # HTTP interface
       - "9000:9000"  # Native protocol
     environment:
-      - CLICKHOUSE_DB=default
-      - CLICKHOUSE_USER=default
-      - CLICKHOUSE_PASSWORD=
+      - CLICKHOUSE_DB=${CLICKHOUSE_DB:-default}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER:-default}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-}
       - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
     volumes:
       - clickhouse-data:/var/lib/clickhouse
